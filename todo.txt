@@ -1,0 +1,52 @@
+
+
+	SVG TO GCODE SCRIPT
+	------------------------------------------------------
+
+	0. Redo svg to gcode in js
+
+
+	https://nraynaud.github.io/webgcode/
+
+	
+	
+
+	MAIN
+	- Upload image
+
+
+	STIPPLE
+	- Redo JS only
+
+	SQUIGGLE
+	- Export SVG
+	- Generate GCode
+
+	CROSSHATCH
+	- Add parameters
+	- Export SVG
+	- Generate GCode
+
+	SPIRAL
+	- 
+
+	
+	CIRCLE
+	- 
+
+
+
+
+
+	2. Generate SVG for all
+	3. Spiral from arcs
+		http://staceylin.com/spiral/
+		https://www.comsol.com/blogs/how-to-build-a-parameterized-archimedean-spiral-geometry/
+	4. Try concentric circles
+	5. redo stippling js only based on stipplegen.pde
+
+
+
+
+
+

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>GCode Image Patternizer</title>
+	<link rel="stylesheet" href="css/main.css">
+	<link rel="stylesheet" href="css/anglepicker.css">
+	<link rel="stylesheet" href="css/colorpicker.css">
+	<link rel="stylesheet" href="js/lib/jquery-ui-1.12.1.custom/jquery-ui.min.css">
+	<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600" rel="stylesheet">
+
+	<script src="js/lib/jquery.min.js"></script>
+	<script src="js/lib/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
+	<script src="js/lib/jquery.svg.min.js"></script>
+	<script src="js/lib/jquery.anglepicker.js"></script>
+	<script src="js/lib/jquery.minicolors.js"></script>
+	<script src="js/lib/rhill-voronoi-core.js"></script>
+
+
+	<script src="js/main.js"></script>
+	<script src="js/stipple.js"></script>
+	<script src="js/squiggle.js"></script>
+	<script src="js/crosshatch.js"></script>
+	<script src="js/spiral.js"></script>
+	<script src="js/circles.js"></script>
+	
+</head>
+
+<body id="home" >
+	<nav>
+		<h1>GCode Image Patternizer</h1>
+		<ul id="method_menu">
+			<li data-method="crosshatch"><div class="icon_crosshatch"></div></li>
+			<li data-method="stipple"><div class="icon_stipple"></div></li>
+			<li data-method="squiggle"><div class="icon_squiggle"></div></li>
+			<li data-method="spiral"><div class="icon_spiral"></div></li>
+			<li data-method="circles"><div class="icon_circles"></div></li>
+		</ul>
+	</nav>
+	<main id="wrapper">
+		<aside id="panelOptions">
+			<h2>IMAGE</h2>
+			<select name="imageFile" id="imageFile"></select>
+		    <button id="toggleBackground" class="ui-button ui-widget">Toggle background</button>
+		   
+			<div id="options_stipple" class="options_panel" style="display: block;"></div>
+			<div id="options_squiggle" class="options_panel"></div>
+			<div id="options_crosshatch" class="options_panel"></div>
+			<div id="options_spiral" class="options_panel"></div>
+			<div id="options_circles" class="options_panel"></div>
+
+			<button id="buttonGenerate" class="ui-button ui-widget">Redraw</button>
+			<button id="buttonGenerateGcode" class="ui-button ui-widget">Export GCode</button>
+			
+
+		</aside>
+		<aside id="panelCanvas">
+			<div id="horizontalRuler">
+				<div class="hmark"></div><div class="hmark"></div><div class="hmark"></div><div class="hmark"></div><div class="hmark"></div><div class="hmark"></div><div class="hmark"></div><div class="hmark"></div><div class="hmark"></div><div class="hmark"></div><div class="hmark"></div>
+			</div>
+			<div id="verticalRuler">
+				<div class="vmark"></div><div class="vmark"></div><div class="vmark"></div><div class="vmark"></div><div class="vmark"></div><div class="vmark"></div><div class="vmark"></div><div class="vmark"></div><div class="vmark"></div><div class="vmark"></div><div class="vmark"></div>
+			</div>
+			<canvas  id="drawCanvas" width="560" height="560"></canvas>
+			<canvas id="imageCanvas" width="560" height="560"></canvas>
+		</aside>
+	</main>
+
+	
+
+
+</body>
+</html>
