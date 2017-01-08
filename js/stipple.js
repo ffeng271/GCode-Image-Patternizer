@@ -7,7 +7,7 @@ var StipplingGenerator = {
 	counter : 0,
 	generations : 2,
 	maxParticles: 2000, 
-	cutOff : 0.35,
+	brightness : 50,
 	dotSizeFactor : 2.5, 
 	minDotSize : 1,
 	maxDotSize : null,
@@ -26,29 +26,27 @@ var StipplingGenerator = {
 	initOptions: function(){
 		var controls = '<span class="options"> \
 							<button id="toggleEdges" class="ui-button ui-widget background_o">Toggle Vornoi edges</button>\
-							<span class="options"> \
 						</span>\
 						<span class="options">\
-							<label>No. of particles:</label>\
-							<input id="spinnerParticles" autocomplete="off" class="ui-spinner-input" role="spinbutton" value="2000" min="100" max="5000" step="100"></span>\
+							<label>DOTS COUNT:</label>\
+							<div id="sliderParticles"></div></span>\
 						<span class="options">\
-							<label>No. of generations (1-5):</label>\
-							<input id="spinnerGenerations" autocomplete="off" class="ui-spinner-input" role="spinbutton" value="2" min="0" max="5" step="1"></span>\
+							<label title="(0.1-0.9)">BRIGHTNESS:</label>\
+							<input id="spinnerBrightness" autocomplete="off" class="ui-spinner-input" role="spinbutton" value="50" min="0" max="255" step="1"></span>\
 						<span class="options">\
-							<label>White cut off (0.1-0.9):</label>\
-							<input id="spinnerCutoff" autocomplete="off" class="ui-spinner-input" role="spinbutton" value="0.35" min="0.1" max="0.9" step="0.01"></span>\
+							<label title="1-5">Generations:</label>\
+							<input id="spinnerGenerations" autocomplete="off" class="ui-spinner-input" role="spinbutton" value="2" min="0" max="15" step="1"></span>\
 						<span class="options">\
-							<label>Min. stipple size (1-4):</label>\
+							<label title="(1-4)">DOT SIZE:</label>\
 							<input id="spinnerMinStippleSize" autocomplete="off" class="ui-spinner-input" role="spinbutton" value="1" min="1" max="4" step="1"></span>\
 						<span class="options">\
-							<label>Stipple scale (1.1-4.0):</label>\
+							<label title="(1.1-4.0)">DOT SCALE:</label>\
 							<input id="spinnerStipplesScale" autocomplete="off" class="ui-spinner-input" role="spinbutton" value="2.4" min="1.1" max="4.0" step="0.1"></span>';
 
 		jQuery("#options_stipple").append(controls);
 
 		jQuery("#spinnerGenerations").spinner();
-		jQuery("#spinnerParticles").spinner();
-		jQuery("#spinnerCutoff").spinner();
+		jQuery("#spinnerBrightness").spinner();
 		jQuery("#spinnerMinStippleSize").spinner();
 		jQuery("#spinnerStipplesScale").spinner({step: 0.1, numberFormat:"n"});
 
@@ -56,40 +54,43 @@ var StipplingGenerator = {
 			StipplingGenerator.showEdges = !StipplingGenerator.showEdges;
 			StipplingGenerator.drawRegions(StipplingGenerator.sites);
 			jQuery(this).toggleClass("background_on");
-			
 		});
 
-		jQuery("#spinnerParticles").on("blur", function(){
-			if (!jQuery(this).spinner("isValid")) {
-				jQuery(this).spinner("value", StipplingGenerator.maxParticles);
-			} else {
-				StipplingGenerator.maxParticles = jQuery(this).spinner("value");
+
+		jQuery( "#sliderParticles" ).slider({
+			min: 100,
+      		max: 4000,
+      		step: 100,
+      		value: StipplingGenerator.maxParticles,
+			create: function() {
+				jQuery(this).find(".ui-slider-handle").text( StipplingGenerator.maxParticles );
+
+			},
+			slide: function( event, ui ) {
+				jQuery(this).find(".ui-slider-handle").text( ui.value );
+				StipplingGenerator.maxParticles = ui.value;
+				StipplingGenerator.processImage();
 			}
 		});
+
 
 
 		jQuery("#spinnerGenerations").on("blur", function(){
 			if (!jQuery(this).spinner("isValid")) {
-				jQuery(this).spinner("value", 1);
+				jQuery(this).spinner("value", StipplingGenerator.generations);
 			} else {
 				StipplingGenerator.generations = jQuery(this).spinner("value");
 			}
+			StipplingGenerator.processImage();
 		});
 
-		jQuery("#spinnerCutoff").on("blur", function(){
+		jQuery("#spinnerBrightness").on("blur", function(){
 			if (!jQuery(this).spinner("isValid")) {
-				jQuery(this).spinner("value", 1);
+				jQuery(this).spinner("value", StipplingGenerator.brightness);
 			} else {
-				StipplingGenerator.generations = jQuery(this).spinner("value");
+				StipplingGenerator.brightness = jQuery(this).spinner("value");
 			}
-		});
-
-		jQuery("#spinnerCutoff").on("blur", function(){
-			if (!jQuery(this).spinner("isValid")) {
-				jQuery(this).spinner("value", 0.35);
-			} else {
-				StipplingGenerator.cutOff = jQuery(this).spinner("value");
-			}
+			StipplingGenerator.processImage();
 		});
 
 		jQuery("#spinnerMinStippleSize").on("blur", function(){
@@ -100,11 +101,12 @@ var StipplingGenerator = {
 			}
 			StipplingGenerator.maxDotSize = StipplingGenerator.minDotSize * (1 + StipplingGenerator.dotSizeFactor);
 			StipplingGenerator.dotScale = StipplingGenerator.maxDotSize - StipplingGenerator.minDotSize;
+			StipplingGenerator.processImage();
 		});
 
 		jQuery("#spinnerStipplesScale").on("blur", function(){
 			if (!jQuery(this).spinner("isValid")) {
-				jQuery(this).spinner("value", 0.35);
+				jQuery(this).spinner("value", 2.4);
 			} else {
 				StipplingGenerator.dotSizeFactor = jQuery(this).spinner("value");
 			}
@@ -123,10 +125,10 @@ var StipplingGenerator = {
 
 		while (iSite--) {
 			v = StipplingGenerator.sites[iSite];
-			var pixelBrightness = App.getPixelBrightness( v.x, v.y)/255;
-			if (pixelBrightness < 1-this.cutOff) {
+			var pixelBrightness = App.getPixelBrightness( v.x, v.y);
+			if (pixelBrightness < 255-this.brightness) {
 				//var radius =  Math.round(this.maxDotSize - pixelBrightness * this.dotScale);	
-				var radius =  this.maxDotSize - (1-pixelBrightness) * this.dotScale;	
+				var radius =  this.maxDotSize - (1-pixelBrightness/255) * this.dotScale;	
 				App.svgController.circle(v.x-2/3, v.y-2/3, radius, {fill: 'none', stroke: "#000000", strokeWidth: 1});
 			}	
 		}
@@ -270,7 +272,7 @@ var StipplingGenerator = {
 
 	processImage: function(){
 		var canvasSize = App.drawCanvas.width;
-
+		this.counter = 0;
 		this.sites = this.rejectionSampling();
 		this.processVornoi(this.sites);
 
@@ -279,10 +281,12 @@ var StipplingGenerator = {
 			if (StipplingGenerator.timeout) {
 				clearTimeout(StipplingGenerator.timeout)
 				StipplingGenerator.timeout = null;
+				
 				}
 
 			StipplingGenerator.timeout = setTimeout(function(){
 				StipplingGenerator.relaxSites();
+
 			}, StipplingGenerator.timeoutDelay);
 		
 		} 
@@ -290,11 +294,7 @@ var StipplingGenerator = {
 	},
 	
 	drawRegions: function(sites){
-		
 		this.drawStipples(sites);
-
-
-		
 	}, 
 
 	drawStipples : function(sites){
@@ -324,10 +324,10 @@ var StipplingGenerator = {
 			//this.drawContext.rect(v.x+canvasOffset-2/3,v.y+canvasOffset-2/3,2,2);
 			App.drawContext.beginPath();
 
-			var pixelBrightness = App.getPixelBrightness(v.x, v.y)/255;
-			if (pixelBrightness < 1-this.cutOff) {
+			var pixelBrightness = App.getPixelBrightness(v.x, v.y);
+			if (pixelBrightness < 255-this.brightness) {
 
-				var radius = this.maxDotSize - pixelBrightness * this.dotScale;
+				var radius = this.maxDotSize - pixelBrightness/255 * this.dotScale;
 				radius = Math.round(radius);
 				App.drawContext.ellipse(v.x-2/3, v.y-2/3, radius, radius, 0, 0, 2 * Math.PI);
 			}	

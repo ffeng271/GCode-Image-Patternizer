@@ -20,7 +20,7 @@ var App = {
 	showBackground : false,
 	imageFile : "vlad.png", //default image 
 	assetsFolder : "../assets/",
-	drawMethod : "stipple",
+	drawMethod : "circles",
 
 	svgController : null, 
 
@@ -48,10 +48,6 @@ var App = {
 	initGeneralOptions : function(){
 		jQuery("#method_menu").find("li").removeClass("selected");
 		jQuery("#method_menu li[data-method="+this.drawMethod+"]").addClass("selected");
-
-		console.log("#method_menu li[data-method="+this.drawMethod+"]");
-
-
 		jQuery("#method_menu li").each(function(i){
 			jQuery(this).on("click", function(evt){
 				var method = jQuery(this).data("method");
@@ -62,16 +58,8 @@ var App = {
 				jQuery(".options_panel").hide();
 				jQuery('#options_'+ method).show();
 				App.processImage();
-				
-
 			});
 		});
-		
-
-
-
-
-
 
 		App.loadAssetsFolder();
 
@@ -104,8 +92,6 @@ var App = {
     		} else if (App.drawMethod == "circles") {
     			CirclesGenerator.drawSVG();
     		}
-
-
 			
 			App.exportSVG();
 		});
@@ -177,8 +163,10 @@ var App = {
 		    success: function (data) {
 		        //List all .jpg file names in the page
 		        first = true;
+		        console.log(jQuery(data));
 		        jQuery(data).find("a:contains('.jpg'),a:contains('.png')").each(function () {
 		            var filename = this.href.replace(window.location.host+"/", "").replace("http://", "");
+		            console.log(filename);
 		            if (first==true){
 						options.push("<option value='" + filename + "' selected>" + filename + "</option>");
 						App.imageFile = filename;

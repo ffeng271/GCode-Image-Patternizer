@@ -261,6 +261,11 @@ h2 {
 
 }
 
+#toggleEdges {
+	background-color: white;
+}
+
+
 #buttonGenerate {
 	margin-top: 10px;
 	background-color: #938172;
@@ -345,3 +350,33 @@ h2 {
     margin-top: 30px;
     margin-bottom: 20px;
 }
+
+#sliderBrightness.ui-slider, #squiggleLinesCount.ui-slider, #noOfCircles.ui-slider, #spacing.ui-slider , #rangeHatchLines.ui-slider,   #sliderParticles.ui-slider {
+	border-radius: 6px;
+	height: 6px;
+	width: 120px;
+	
+}
+
+#sliderBrightness .ui-widget-header {
+	background: #CC9E61;
+}
+#sliderBrightness .ui-slider-handle, #squiggleLinesCount .ui-slider-handle , #noOfCircles .ui-slider-handle , #spacing .ui-slider-handle, #rangeHatchLines .ui-slider-handle, #sliderParticles .ui-slider-handle {
+	outline: none;
+	border-radius: 10px !important;
+	width: 16px;
+	height: 16px;
+	top: -6px;
+	font-size: 8px;
+	font-family: 'Roboto Condensed', sans-serif;
+	text-align: center;
+	font-weight: 700;
+	line-height: 17px;
+}
+
+#sliderBrightness .ui-slider-handle.ui-state-active, #squiggleLinesCount .ui-slider-handle.ui-state-active, #noOfCircles .ui-slider-handle.ui-state-active, #spacing .ui-slider-handle.ui-state-active, #rangeHatchLines .ui-slider-handle.ui-state-active, #sliderParticles .ui-slider-handle.ui-state-active {
+	background-color: #938172;
+	border: 1px solid #938172;
+
+}
+

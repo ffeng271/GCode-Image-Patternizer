@@ -5,8 +5,8 @@ var SquiggleGenerator = {
 	ymult : 1, //Strenght/amplitude
 	xstep : 0, 
 	frequency : 128.00,
-  	minB : 0,
-  	maxB : 255,
+  	minB : 30,
+  	maxB : 210,
 
 
 
@@ -19,44 +19,75 @@ var SquiggleGenerator = {
 
 	initOptions : function(){
 		var controls = '<span class="options"> \
-						<label>No. of line (10-200):</label>\
-							<input id="spinnerLines" autocomplete="off" class="ui-spinner-input" role="spinbutton" value="100" min="10" max="200" step="10"></span>\
+						<label>LINES COUNT:</label>\
+							<div id="squiggleLinesCount"></div></span>\
 						<span class="options">\
-							<label>Horizontal detail (1-3):</label>\
+							<label>BRIGHTNESS</label>\
+							<div id="sliderBrightness"></div></span>\
+						<span class="options">\
+							<label title="(1-3)">Horizontal detail:</label>\
 							<input id="spinnerDetail" autocomplete="off" class="ui-spinner-input" role="spinbutton" value="30" min="1" max="30" step="1"></span>\
 						<span class="options">\
-							<label>Strength (0-20):</label>\
+							<label title="(0-20)">Strength:</label>\
 							<input id="spinnerStrength" autocomplete="off" class="ui-spinner-input" role="spinbutton" value="1" min="0" max="20" step="1"></span>\
 						<span class="options">\
-							<label>Frequency(5-255):</label>\
-							<input id="spinnerFrequency" autocomplete="off" class="ui-spinner-input" role="spinbutton" value="128.0" min="5.0" max="255.0" step="0.01"></span>\
-						<span class="options">\
-							<label>White point:</label>\
-							<input id="spinnerWhitePoint" autocomplete="off" class="ui-spinner-input" role="spinbutton" value="255" min="1" max="256" step="1"></span>\
-						<span class="options">\
-							<label>Black point:</label>\
-							<input id="spinnerBlackPoint" autocomplete="off" class="ui-spinner-input" role="spinbutton" value="0" min="0" max="256" step="1"></span>';
+							<label title="(5-255)">Frequency:</label>\
+							<input id="spinnerFrequency" autocomplete="off" class="ui-spinner-input" role="spinbutton" value="128.0" min="5.0" max="255.0" step="0.01"></span>';
 
 		jQuery("#options_squiggle").append(controls);
 
 
-		jQuery("#spinnerLines").spinner();
+		//jQuery("#spinnerLines").spinner();
+		//jQuery("#spinnerLines").val(this.linesNumber);
 		jQuery("#spinnerDetail").spinner();
 		jQuery("#spinnerFrequency").spinner({step: 0.1, numberFormat:"n"});
-		jQuery("#spinnerWhitePoint").spinner();
-		jQuery("#spinnerBlackPoint").spinner();
 		jQuery("#spinnerStrength").spinner();
 
+		// jQuery("#spinnerLines").on("change", function() {
+  //   		SquiggleGenerator.ystep = jQuery(this).val();
+  //   		SquiggleGenerator.drawLines();
+  //   	});
 
-		jQuery("#spinnerLines").on("blur", function(){
-			if (!jQuery(this).spinner("isValid")) {
-				jQuery(this).spinner("value", SquiggleGenerator.ystep);
-			} else {
-				SquiggleGenerator.ystep = jQuery(this).spinner("value");
+
+// <input id="spinnerLines" type="range" min="10" max="200" step="10" /></span>\
+		jQuery( "#squiggleLinesCount" ).slider({
+			min: 10,
+      		max: 200,
+      		step: 1,
+      		value: SquiggleGenerator.ystep,
+			create: function() {
+				jQuery(this).find(".ui-slider-handle").text( SquiggleGenerator.ystep );
+			},
+			slide: function( event, ui ) {
+				jQuery(this).find(".ui-slider-handle").text( ui.value );
+				SquiggleGenerator.ystep = ui.value;
+				SquiggleGenerator.drawLines();
 			}
-
 		});
 
+		jQuery( "#sliderBrightness" ).slider({
+			range: true,
+			min: 0,
+			max: 255,
+			values: [ SquiggleGenerator.minB, SquiggleGenerator.maxB ],
+			create: function( event, ui){
+	            jQuery("#sliderBrightness").find(".ui-slider-handle:first").text(SquiggleGenerator.minB);
+	            jQuery("#sliderBrightness").find(".ui-slider-handle:last").text(SquiggleGenerator.maxB);
+			},
+			slide: function( event, ui ) {
+            	jQuery("#sliderBrightness").find(".ui-slider-handle:first").text(ui.values[0]);
+                jQuery("#sliderBrightness").find(".ui-slider-handle:last").text(ui.values[1]);
+
+
+				SquiggleGenerator.minB = ui.values[0];
+				SquiggleGenerator.maxB = ui.values[1];
+				SquiggleGenerator.drawLines();
+			}
+		});
+
+
+
+	
 		jQuery("#spinnerDetail").on("blur", function(){
 			if (!jQuery(this).spinner("isValid")) {
 				jQuery(this).spinner("value", SquiggleGenerator.detail);
@@ -78,22 +109,6 @@ var SquiggleGenerator = {
 			SquiggleGenerator.xsmooth = 256-SquiggleGenerator.frequency;
 		});
 
-		jQuery("#spinnerWhitePoint").on("blur", function(){
-			if (!jQuery(this).spinner("isValid")) {
-				jQuery(this).spinner("value", SquiggleGenerator.maxB);
-			} else {
-				SquiggleGenerator.maxB = jQuery(this).spinner("value");
-			}
-		});
-
-		jQuery("#spinnerBlackPoint").on("blur", function(){
-			if (!jQuery(this).spinner("isValid")) {
-				jQuery(this).spinner("value", SquiggleGenerator.minB);
-			} else {
-				SquiggleGenerator.minB = jQuery(this).spinner("value");
-			}
-		});
-
 		jQuery("#spinnerStrength").on("blur", function(){
 			if (!jQuery(this).spinner("isValid")) {
 				jQuery(this).spinner("value", SquiggleGenerator.ymult);
@@ -106,7 +121,6 @@ var SquiggleGenerator = {
 
 	processImage : function(){
 		SquiggleGenerator.drawLines();
-		console.log("processing squiggle");
 	},
 
 	drawLines : function(){

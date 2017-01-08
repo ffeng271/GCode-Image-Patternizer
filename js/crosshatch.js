@@ -20,9 +20,8 @@ var CrosshatchGenerator = {
 
 	initOptions : function(){
 		var controls = '<span class="options">\
-							<label>No. of lines:</label>\
-							<!--input id="spinnerHatchLines" autocomplete="off" class="ui-spinner-input" role="spinbutton" value="200" min=10" max="400" step="1"></span-->\
-							<input id="rangeHatchLines" type="range" min="20" max="200" step="10" /></span>\
+							<label>LINES COUNT:</label>\
+							<div id="rangeHatchLines"></div></span>\
 						<span class="options">\
 							<label>Resolution:</label>\
 							<input id="spinnerResolution" autocomplete="off" class="ui-spinner-input" role="spinbutton" value="1" min="0.5" max="5" step="0.5"></span>\
@@ -46,12 +45,22 @@ var CrosshatchGenerator = {
 							<div id="colorPicker3" class="colorPicker"></div></span><br/>';
 
 		jQuery("#options_crosshatch").append(controls);
-		jQuery("#rangeHatchLines").val(this.linesNumber);
+		jQuery( "#rangeHatchLines" ).slider({
+			min: 20,
+      		max: 200,
+      		step: 10,
+      		value: CrosshatchGenerator.linesNumber,
+			create: function() {
+				jQuery(this).find(".ui-slider-handle").text( CrosshatchGenerator.linesNumber);
 
-		jQuery("#rangeHatchLines").on("change", function() {
-    		CrosshatchGenerator.linesNumber = jQuery(this).val();
-    		CrosshatchGenerator.drawCrosshatch();
-    	});
+			},
+			slide: function( event, ui ) {
+				jQuery(this).find(".ui-slider-handle").text( ui.value );
+				CrosshatchGenerator.linesNumber= ui.value;
+				CrosshatchGenerator.drawCrosshatch();
+			}
+		});
+
 
 		jQuery("#spinnerResolution").spinner();	
 		jQuery("#spinnerResolution").on("blur", function(){
@@ -121,7 +130,7 @@ var CrosshatchGenerator = {
 			if (!jQuery(this).spinner("isValid")) {
 				jQuery(this).spinner("value", CrosshatchGenerator.layer2Treshold);
 			} else {
-				CrosshatchGenerator.layer2Angle = jQuery(this).spinner("value");
+				CrosshatchGenerator.layer2Treshold = jQuery(this).spinner("value");
 			}
 		});	
 
